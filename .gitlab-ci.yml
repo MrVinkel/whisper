@@ -1,0 +1,32 @@
+stages:
+- build
+- test
+
+build:
+  stage: build
+  # https://hub.docker.com/_/golang
+  image: golang:1.22
+  before_script:
+    - make setup
+  script:
+    - make build
+  artifacts:
+    paths:
+      - bin
+    expire_in: 3 days
+
+test:
+  stage: test
+  # https://hub.docker.com/_/golang
+  image: golang:1.22
+  before_script:
+    - make setup
+  script:
+    - make test
+
+lint:
+  stage: test
+  # https://hub.docker.com/r/golangci/golangci-lint
+  image: golangci/golangci-lint:latest
+  script:
+    - make lint
