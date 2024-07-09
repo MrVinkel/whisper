@@ -1,0 +1,10 @@
+vault:
+  address: http://127.0.0.1:8200
+  authMethod: userpass
+  authMount: userpass
+secrets:
+- path: mysecret
+  mount: secret
+  prefix: MY_APP_
+  keys:
+  - kim

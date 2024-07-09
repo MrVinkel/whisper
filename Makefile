@@ -1,5 +1,12 @@
 .DEFAULT_GOAL := build
 
+ifdef CI_COMMIT_TAG
+VERSION := $(CI_COMMIT_TAG)
+else
+VERSION := dev
+endif
+VERSION_PACKAGE := gitlab.com/mr_vinkel/whisper/cmd/whisper
+
 .PHONY: setup
 setup: ## Install tools and download dependencies
 	@go mod download
@@ -8,7 +15,8 @@ setup: ## Install tools and download dependencies
 
 .PHONY: build
 build: ## Build gateway and forwarder
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o ./bin/whisper ./cmd
+	@$(eval VERSIONFLAGS=-X '$(VERSION_PACKAGE).Version=$(VERSION)')
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s $(VERSIONFLAGS)" -o ./bin/whisper ./cmd
 
 .PHONY: test
 test: ## Run tests
@@ -27,6 +35,15 @@ lint: build ## Lint code
 clean: ## Clean all build files
 	@rm -rf bin
 	@go cache clean
+
+.PHONY: dev
+dev:
+	@docker run -e 'VAULT_DEV_ROOT_TOKEN_ID=potato' --cap-add=IPC_LOCK -p=8200:8200 -d --name=dev-vault hashicorp/vault
+
+.PHONY: dev-clean
+dev-clean:
+	@docker stop dev-vault
+	@docker rm dev-vault
 
 .PHONY: help
 help: ## Shows this help message
