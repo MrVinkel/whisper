@@ -26,7 +26,7 @@ func Secrets(cmd *cobra.Command, args []string) {
 		cmd.Printf("Failed to read config: %v\n", err)
 		return
 	}
-	vault, err := Authenticate(config.Vault)
+	vault, err := Authenticate(cmd.Context(), config.Vault)
 	if err != nil {
 		cmd.Printf("Failed to authenticate: %v\n", err)
 		return

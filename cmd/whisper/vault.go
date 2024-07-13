@@ -18,13 +18,13 @@ type Vault struct {
 	*vault.Client
 }
 
-func Authenticate(config VaultConfig) (*Vault, error) {
+func Authenticate(ctx context.Context, config VaultConfig) (*Vault, error) {
 	if config.AuthMethod == "userpass" {
 		return userpass(config)
 	} else if config.AuthMethod == "azure" {
 		return azure(config)
 	} else if config.AuthMethod == "oidc" {
-		return oidc(config)
+		return oidc(ctx, config)
 	}
 	return nil, fmt.Errorf("unsupported auth method: %s", config.AuthMethod)
 }
@@ -32,10 +32,40 @@ func Authenticate(config VaultConfig) (*Vault, error) {
 type callback struct {
 	done        chan bool
 	callBackURL *url.URL
+	server      http.Server
+}
+
+func startCallbackServer(port int) *callback {
+	callback := &callback{
+		done:        make(chan bool, 1),
+		callBackURL: nil,
+	}
+	httpServer := &http.Server{Addr: fmt.Sprintf("localhost:%d", port)}
+	serverMux := http.NewServeMux()
+	serverMux.HandleFunc("/oidc/callback", callback.handleCallback)
+	httpServer.Handler = serverMux
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			fmt.Printf("failed to start callback webserver: %s", err.Error())
+		}
+	}()
+	return callback
+}
+
+func (c *callback) stop(ctx context.Context) {
+	err := c.server.Shutdown(ctx)
+	if err != nil {
+		fmt.Printf("failed to stop callback webserver: %v", err)
+	}
+}
+
+func (c *callback) waitForCallback() *url.URL {
+	<-c.done
+	return c.callBackURL
 }
 
 func (c *callback) handleCallback(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, `
+	_, err := io.WriteString(w, `
 	<!DOCTYPE html>
 	<html>
 	<head>
@@ -48,6 +78,9 @@ func (c *callback) handleCallback(w http.ResponseWriter, r *http.Request) {
 	<body><p>Authenticated! This page closes in 2 seconds</p></body>
 	</html>
 	`)
+	if err != nil {
+		fmt.Printf("failed to write response: %v", err)
+	}
 	c.callBackURL = r.URL
 	c.done <- true
 }
@@ -64,7 +97,7 @@ func azure(config VaultConfig) (*Vault, error) {
 	return &Vault{client}, nil
 }
 
-func oidc(config VaultConfig) (*Vault, error) {
+func oidc(ctx context.Context, config VaultConfig) (*Vault, error) {
 	client, err := vault.New(
 		vault.WithAddress(config.Address),
 		vault.WithRequestTimeout(30*time.Second),
@@ -73,45 +106,30 @@ func oidc(config VaultConfig) (*Vault, error) {
 		return nil, err
 	}
 
+	// Start callback server
 	port := config.CallbackPort
 	if port == 0 {
 		port = 8250
 	}
-	ctx, cancelFunc := context.WithCancel(context.Background())
-	callback := &callback{
-		done:        make(chan bool, 1),
-		callBackURL: nil,
-	}
-	defer cancelFunc()
-	httpServer := &http.Server{Addr: fmt.Sprintf("localhost:%d", port)}
-	serverMux := http.NewServeMux()
-	serverMux.HandleFunc("/oidc/callback", callback.handleCallback)
-	httpServer.Handler = serverMux
-	defer httpServer.Shutdown(ctx)
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Printf("failed to start callback webserver: %s", err.Error())
-		}
-	}()
+	callback := startCallbackServer(port)
+	defer callback.stop(ctx)
 
-	client, err = vault.New(
-		vault.WithAddress(config.Address),
-		vault.WithRequestTimeout(30*time.Second),
-	)
-	if err != nil {
-		return nil, err
+	// Make oidc auth request
+	authMount := config.AuthMount
+	if authMount == "" {
+		authMount = "oidc"
 	}
-
 	r, err := client.Auth.JwtOidcRequestAuthorizationUrl(ctx,
 		schema.JwtOidcRequestAuthorizationUrlRequest{
 			RedirectUri: fmt.Sprintf("http://localhost:%d/oidc/callback", port),
 		},
-		vault.WithMountPath("oidc"),
+		vault.WithMountPath(authMount),
 	)
 	if err != nil {
 		return nil, err
 	}
 
+	// Open auth url in browser
 	if u, ok := r.Data["auth_url"].(string); ok {
 		if err := Open(u); err != nil {
 			return nil, fmt.Errorf("failed to open browser: %w", err)
@@ -120,13 +138,14 @@ func oidc(config VaultConfig) (*Vault, error) {
 		return nil, fmt.Errorf("failed to get auth url")
 	}
 
-	// wait for callback
-	_ = <-callback.done
+	// Wait for callback
+	callbackURL := callback.waitForCallback()
 
+	// Handle callback
 	r, err = client.Auth.JwtOidcCallback(ctx,
 		"", // client nonce is not needed in this case
-		callback.callBackURL.Query().Get("code"),
-		callback.callBackURL.Query().Get("state"),
+		callbackURL.Query().Get("code"),
+		callbackURL.Query().Get("state"),
 		vault.WithMountPath("oidc"),
 	)
 	if err != nil {
