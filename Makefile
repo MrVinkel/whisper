@@ -37,13 +37,25 @@ clean: ## Clean all build files
 	@go cache clean
 
 .PHONY: dev
-dev:
-	@docker run -e 'VAULT_DEV_ROOT_TOKEN_ID=potato' --cap-add=IPC_LOCK -p=8200:8200 -d --name=dev-vault hashicorp/vault
+dev: ## Setup dev vault
+	@docker run -e 'VAULT_DEV_ROOT_TOKEN_ID=root' -e 'VAULT_TOKEN=root' -e 'VAULT_ADDR=http://127.0.0.1:8200' -v ${PWD}/testdata:/testdata:ro --cap-add=IPC_LOCK -p=8200:8200 -d --name=dev-vault hashicorp/vault
+	@echo "Waiting for vault to start..."
+	@until docker exec dev-vault vault status 2>/dev/null; do sleep 1; done
+	@echo "Vault is ready"
+	@docker exec dev-vault vault auth enable userpass
+	@docker exec dev-vault vault policy write writer /testdata/writer-policy.hcl
+	@docker exec dev-vault vault policy write reader /testdata/reader-policy.hcl
+	@docker exec dev-vault vault write auth/userpass/users/reader \password=reader \policies=reader
+	@docker exec dev-vault vault write auth/userpass/users/writer \password=writer \policies=writer
+	@docker exec dev-vault vault kv put -mount=secret mysecret foo=bar hello=world
+	@docker exec dev-vault vault auth enable oidc
+	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(OIDC_DOMAIN)" oidc_client_id="$(OIDC_CLIENT_ID)" oidc_client_secret="$(OIDC_CLIENT_SECRET)" default_role="reader"
+	@docker exec dev-vault vault write auth/oidc/role/reader bound_audiences="$(OIDC_CLIENT_ID)" allowed_redirect_uris="http://localhost:8200/ui/vault/auth/oidc/oidc/callback" allowed_redirect_uris="http://localhost:8250/oidc/callback" user_claim="sub" token_policies="reader"
 
 .PHONY: dev-clean
-dev-clean:
-	@docker stop dev-vault
-	@docker rm dev-vault
+dev-clean: ## Clean dev vault
+	@docker stop dev-vault || true
+	@docker rm dev-vault || true
 
 .PHONY: help
 help: ## Shows this help message

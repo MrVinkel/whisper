@@ -18,9 +18,10 @@ type SecretConfig struct {
 }
 
 type VaultConfig struct {
-	Address    string `yaml:"address"`
-	AuthMethod string `yaml:"authMethod"`
-	AuthMount  string `yaml:"authMount"`
+	Address      string `yaml:"address"`
+	AuthMethod   string `yaml:"authMethod"`
+	AuthMount    string `yaml:"authMount"`
+	CallbackPort int    `yaml:"callbackPort"`
 }
 
 type DirConfig struct {

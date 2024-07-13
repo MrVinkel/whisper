@@ -1,10 +1,15 @@
 vault:
-  address: http://127.0.0.1:8200
-  authMethod: userpass
-  authMount: userpass
+  address: http://localhost:8200
+
+  # userpass authentication
+  # authMethod: userpass
+  # authMount: userpass
+
+  # OIDC authentication
+  authMethod: oidc
+  authMount: oidc
+  callbackPort: 8250
 secrets:
 - path: mysecret
   mount: secret
   prefix: MY_APP_
-  keys:
-  - kim
