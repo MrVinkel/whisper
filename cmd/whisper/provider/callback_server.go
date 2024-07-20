@@ -46,15 +46,13 @@ func (c *callbackServer) waitForCallback() *url.URL {
 func (c *callbackServer) handleCallback(w http.ResponseWriter, r *http.Request) {
 	_, err := io.WriteString(w, `
 	<!DOCTYPE html>
-	<html>
+	<html lang="en">
 	<head>
-	<script>
-		setTimeout(function() {
-			window.close()
-		}, 2000);
-	</script>
+	<meta charset="UTF-8">
+	<title>Authenticated</title>
+	<script>setTimeout(function() { window.close() }, 2000);</script>
 	</head>
-	<body><p>Authenticated! This page closes in 2 seconds</p></body>
+	<body><h1>Authenticated &#x1F600; This page closes in 2 seconds</h1></body>
 	</html>
 	`)
 	if err != nil {
