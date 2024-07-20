@@ -22,9 +22,8 @@ type VaultConfig struct {
 }
 
 type Vault struct {
-	*vault.Client
+	client *vault.Client
 	config VaultConfig
-	authFn func(context.Context) error
 }
 
 func NewVaultProvider(config map[string]interface{}) (Provider, error) {
@@ -42,33 +41,24 @@ func NewVaultProvider(config map[string]interface{}) (Provider, error) {
 		return nil, err
 	}
 
-	vault := Vault{Client: client, config: vaultConfig}
-
-	switch vaultConfig.AuthMethod {
-	case "azure":
-		vault.authFn = vault.azure
-		break
-	case "oidc":
-		vault.authFn = vault.oidc
-		break
-	case "userpass":
-		vault.authFn = vault.userpass
-		break
-	default:
-		return nil, fmt.Errorf("unsupported auth method: %s", vaultConfig.AuthMethod)
-	}
-
-	return &vault, nil
+	return &Vault{client: client, config: vaultConfig}, nil
 }
 
 func (v *Vault) Authenticate(ctx context.Context) error {
-	return v.authFn(ctx)
+	switch v.config.AuthMethod {
+	case "oidc":
+		return v.oidc(ctx)
+	case "userpass":
+		return v.oidc(ctx)
+	default:
+		return fmt.Errorf("unsupported auth method: %s", v.config.AuthMethod)
+	}
 }
 
 func (v *Vault) GetSecrets(secretConfig []config.SecretConfig) (map[string]string, error) {
 	result := make(map[string]string)
 	for _, secrets := range secretConfig {
-		kvV2resp, err := v.Secrets.KvV2Read(context.Background(), secrets.Path, vault.WithMountPath(v.config.SecretMount))
+		kvV2resp, err := v.client.Secrets.KvV2Read(context.Background(), secrets.Path, vault.WithMountPath(v.config.SecretMount))
 		if err != nil {
 			return nil, fmt.Errorf("failed to read secret: %w", err)
 		}
@@ -93,10 +83,6 @@ func (v *Vault) GetSecrets(secretConfig []config.SecretConfig) (map[string]strin
 	return result, nil
 }
 
-func (v *Vault) azure(ctx context.Context) error {
-	return fmt.Errorf("not implemented")
-}
-
 func (v *Vault) oidc(ctx context.Context) error {
 	// Start callback server
 	port := v.config.CallbackPort
@@ -111,7 +97,7 @@ func (v *Vault) oidc(ctx context.Context) error {
 	if authMount == nil {
 		authMount = util.Ptr("oidc")
 	}
-	r, err := v.Auth.JwtOidcRequestAuthorizationUrl(ctx,
+	r, err := v.client.Auth.JwtOidcRequestAuthorizationUrl(ctx,
 		schema.JwtOidcRequestAuthorizationUrlRequest{
 			RedirectUri: fmt.Sprintf("http://localhost:%d/oidc/callback", *port),
 		},
@@ -134,7 +120,7 @@ func (v *Vault) oidc(ctx context.Context) error {
 	callbackURL := callback.WaitForCallback()
 
 	// Handle callback
-	r, err = v.Auth.JwtOidcCallback(ctx,
+	r, err = v.client.Auth.JwtOidcCallback(ctx,
 		"", // client nonce is not needed in this case
 		callbackURL.Query().Get("code"),
 		callbackURL.Query().Get("state"),
@@ -144,14 +130,14 @@ func (v *Vault) oidc(ctx context.Context) error {
 		return err
 	}
 
-	if err := v.SetToken(r.Auth.ClientToken); err != nil {
+	if err := v.client.SetToken(r.Auth.ClientToken); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (v *Vault) userpass(ctx context.Context) error {
+func (v *Vault) userpass(_ context.Context) error {
 	fmt.Print("username: ")
 	var username string
 	_, err := fmt.Scanln(&username)
@@ -171,14 +157,14 @@ func (v *Vault) userpass(ctx context.Context) error {
 		mount = util.Ptr("userpass")
 	}
 
-	resp, err := v.Auth.UserpassLogin(context.Background(), username, schema.UserpassLoginRequest{
+	resp, err := v.client.Auth.UserpassLogin(context.Background(), username, schema.UserpassLoginRequest{
 		Password: string(password),
 	}, vault.WithMountPath(*mount))
 	if err != nil {
 		return fmt.Errorf("failed to login: %w", err)
 	}
 
-	if err := v.SetToken(resp.Auth.ClientToken); err != nil {
+	if err := v.client.SetToken(resp.Auth.ClientToken); err != nil {
 		return err
 	}
 

@@ -46,7 +46,7 @@ dev: ## Setup dev vault with default secrets, policies and users
 		docker restart dev-vault; \
 	else \
 		echo "Creating dev vault"; \
-		docker run -e 'VAULT_DEV_ROOT_TOKEN_ID=root' -e 'VAULT_TOKEN=root' -e 'VAULT_ADDR=http://127.0.0.1:8200' -v ${PWD}/testdata:/testdata:ro --cap-add=IPC_LOCK -p=8200:8200 -d --name=dev-vault hashicorp/vault; \
+		docker run -e 'VAULT_DEV_ROOT_TOKEN_ID=root' -e 'VAULT_TOKEN=root' -e 'VAULT_ADDR=http://127.0.0.1:8200' -e 'AZURE_GO_SDK_LOG_LEVEL=DEBUG' -v ${PWD}/testdata:/testdata:ro --cap-add=IPC_LOCK -p=8200:8200 -d --name=dev-vault hashicorp/vault; \
 		echo "Waiting for vault to start..."; \
 		until docker exec dev-vault vault status 2>/dev/null; do sleep 1; done; \
 		echo "Vault is ready"; \
@@ -64,10 +64,10 @@ dev-oidc: dev ## Setup dev vault with oidc authentication
 	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(OIDC_DOMAIN)" oidc_client_id="$(OIDC_CLIENT_ID)" oidc_client_secret="$(OIDC_CLIENT_SECRET)" default_role="reader"
 	@docker exec dev-vault vault write auth/oidc/role/reader bound_audiences="$(OIDC_CLIENT_ID)" allowed_redirect_uris="http://localhost:8200/ui/vault/auth/oidc/oidc/callback" allowed_redirect_uris="http://localhost:8250/oidc/callback" user_claim="sub" token_policies="reader"
 
-.PHONY: dev-azure
-dev-azure: dev ## Setup dev vault with azure authentication
-	@docker exec dev-vault vault auth enable azure
-	@docker exec dev-vault vault write auth/azure/config tenant_id=$(AZURE_TENANT) resource=https://management.azure.com/ client_id=$(AZURE_CLIENT_ID) client_secret=$(AZURE_CLIENT_SECRET)
+dev-oidc-azure: dev ## Setup dev vault with azure oidc authentication
+	@docker exec dev-vault vault auth enable oidc
+	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(AZURE_OIDC_DOMAIN)" oidc_client_id="$(AZURE_OIDC_CLIENT_ID)" oidc_client_secret="$(AZURE_OIDC_CLIENT_SECRET)" default_role="reader"
+	@docker exec dev-vault vault write auth/oidc/role/reader bound_audiences="$(AZURE_OIDC_CLIENT_ID)" allowed_redirect_uris="http://localhost:8200/ui/vault/auth/oidc/oidc/callback" allowed_redirect_uris="http://localhost:8250/oidc/callback" user_claim="sub" token_policies="reader"
 
 .PHONY: dev-clean
 dev-clean: ## Stop and remove dev vault
