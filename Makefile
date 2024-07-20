@@ -64,6 +64,7 @@ dev-oidc: dev ## Setup dev vault with oidc authentication
 	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(OIDC_DOMAIN)" oidc_client_id="$(OIDC_CLIENT_ID)" oidc_client_secret="$(OIDC_CLIENT_SECRET)" default_role="reader"
 	@docker exec dev-vault vault write auth/oidc/role/reader bound_audiences="$(OIDC_CLIENT_ID)" allowed_redirect_uris="http://localhost:8200/ui/vault/auth/oidc/oidc/callback" allowed_redirect_uris="http://localhost:8250/oidc/callback" user_claim="sub" token_policies="reader"
 
+.PHONY: dev-oidc-azure
 dev-oidc-azure: dev ## Setup dev vault with azure oidc authentication
 	@docker exec dev-vault vault auth enable oidc
 	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(AZURE_OIDC_DOMAIN)" oidc_client_id="$(AZURE_OIDC_CLIENT_ID)" oidc_client_secret="$(AZURE_OIDC_CLIENT_SECRET)" default_role="reader"

@@ -13,8 +13,11 @@ type Provider interface {
 }
 
 func NewProvider(ctx context.Context, config map[string]interface{}) (Provider, error) {
-	if config["type"] == "vault" {
+	provider := config["type"]
+	switch provider {
+	case "vault":
 		return NewVaultProvider(config)
+	default:
+		return nil, fmt.Errorf("unsupported provider type: %s", provider)
 	}
-	return nil, fmt.Errorf("unsupported provider type: %s", config["type"])
 }
