@@ -49,7 +49,7 @@ func (v *Vault) Authenticate(ctx context.Context) error {
 	case "oidc":
 		return v.oidc(ctx)
 	case "userpass":
-		return v.oidc(ctx)
+		return v.userpass(ctx)
 	default:
 		return fmt.Errorf("unsupported auth method: %s", v.config.AuthMethod)
 	}
