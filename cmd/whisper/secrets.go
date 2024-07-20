@@ -6,6 +6,8 @@ import (
 	"os/exec"
 
 	"github.com/spf13/cobra"
+	"gitlab.com/mr_vinkel/whisper/cmd/whisper/config"
+	"gitlab.com/mr_vinkel/whisper/cmd/whisper/provider"
 )
 
 func SecretsCmd() *cobra.Command {
@@ -21,17 +23,22 @@ func SecretsCmd() *cobra.Command {
 }
 
 func Secrets(cmd *cobra.Command, args []string) {
-	config, err := ReadDirConfig()
+	config, err := config.ReadDirConfig()
 	if err != nil {
 		cmd.Printf("Failed to read config: %v\n", err)
 		return
 	}
-	vault, err := Authenticate(cmd.Context(), config.Vault)
+	secretProvider, err := provider.NewProvider(cmd.Context(), config.Provider)
+	if err != nil {
+		cmd.Printf("Failed to create provider: %v\n", err)
+		return
+	}
+	err = secretProvider.Authenticate(cmd.Context())
 	if err != nil {
 		cmd.Printf("Failed to authenticate: %v\n", err)
 		return
 	}
-	secrets, err := vault.GetSecrets(config.Secrets)
+	secrets, err := secretProvider.GetSecrets(config.Secrets)
 	if err != nil {
 		cmd.Printf("Failed to get secrets: %v\n", err)
 		return

@@ -1,4 +1,5 @@
-vault:
+provider:
+  type: vault
   address: http://localhost:8200
 
   # userpass authentication
@@ -8,8 +9,8 @@ vault:
   # OIDC authentication
   authMethod: oidc
   authMount: oidc
+  secretMount: secret
   callbackPort: 8250
 secrets:
 - path: mysecret
-  mount: secret
   prefix: MY_APP_
