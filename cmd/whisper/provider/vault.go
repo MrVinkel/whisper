@@ -75,13 +75,13 @@ func (v *Vault) GetSecrets(secretConfig []config.SecretConfig) (map[string]strin
 
 		for k, v := range kvV2resp.Data.Data {
 			keyConfig := secrets.Get(k)
-			if keyConfig == nil {
+			if len(secrets.Keys) != 0 && keyConfig == nil {
 				continue
 			}
 
 			key := k
 			value := fmt.Sprintf("%v", v)
-			if keyConfig.Rename != nil {
+			if keyConfig != nil && keyConfig.Rename != nil {
 				key = *keyConfig.Rename
 			} else if secrets.Prefix != nil {
 				key = fmt.Sprintf("%s%s", *secrets.Prefix, k)
