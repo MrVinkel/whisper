@@ -103,8 +103,8 @@ func (v *Vault) oidc(ctx context.Context) error {
 	if port == nil {
 		port = util.Ptr(8250)
 	}
-	callback := startCallbackServer(*port)
-	defer callback.stop(ctx)
+	callback := StartCallbackServer(*port)
+	defer callback.Stop(ctx)
 
 	// Make oidc auth request
 	authMount := v.config.AuthMount
@@ -131,7 +131,7 @@ func (v *Vault) oidc(ctx context.Context) error {
 	}
 
 	// Wait for callback
-	callbackURL := callback.waitForCallback()
+	callbackURL := callback.WaitForCallback()
 
 	// Handle callback
 	r, err = v.Auth.JwtOidcCallback(ctx,
