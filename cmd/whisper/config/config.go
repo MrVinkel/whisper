@@ -52,7 +52,7 @@ func ReadDirConfig() (*DirConfig, error) {
 	if config.Provider["type"] == nil || config.Provider["type"] == "" {
 		return nil, fmt.Errorf("provider type is required")
 	}
-	if config.Secrets == nil || len(config.Secrets) == 0 {
+	if len(config.Secrets) == 0 {
 		return nil, fmt.Errorf("no secrets configured")
 	}
 
