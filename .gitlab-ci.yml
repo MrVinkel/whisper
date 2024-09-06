@@ -5,7 +5,7 @@ stages:
 build:
   stage: build
   # https://hub.docker.com/_/golang
-  image: golang:1.23.0
+  image: golang:1.23.1
   before_script:
     - make setup
   script:
@@ -18,7 +18,7 @@ build:
 test:
   stage: test
   # https://hub.docker.com/_/golang
-  image: golang:1.23.0
+  image: golang:1.23.1
   before_script:
     - make setup
   script:
