@@ -1,6 +1,6 @@
-module gitlab.com/mr_vinkel/whisper
+module github.com/mrvinkel/whisper
 
-go 1.22.5
+go 1.23.5
 
 require (
 	github.com/hashicorp/vault-client-go v0.4.3

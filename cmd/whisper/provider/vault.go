@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/vault-client-go"
 	"github.com/hashicorp/vault-client-go/schema"
 	"github.com/mitchellh/mapstructure"
-	"gitlab.com/mr_vinkel/whisper/cmd/whisper/config"
-	"gitlab.com/mr_vinkel/whisper/cmd/whisper/util"
+	"github.com/mrvinkel/whisper/cmd/whisper/config"
+	"github.com/mrvinkel/whisper/cmd/whisper/util"
 	"golang.org/x/term"
 )
 

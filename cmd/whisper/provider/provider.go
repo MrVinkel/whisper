@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"gitlab.com/mr_vinkel/whisper/cmd/whisper/config"
+	"github.com/mrvinkel/whisper/cmd/whisper/config"
 )
 
 type Provider interface {

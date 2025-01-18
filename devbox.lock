@@ -1,0 +1,149 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "go@1.23.4": {
+      "last_modified": "2024-12-23T21:10:33Z",
+      "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#go",
+      "source": "devbox-search",
+      "version": "1.23.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bva4mymi5b2lhvvbccx8ipws89rar1d8-go-1.23.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/bva4mymi5b2lhvvbccx8ipws89rar1d8-go-1.23.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9lvi0l2yf6bwamsjs5d5n9i57c6kbd2c-go-1.23.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/9lvi0l2yf6bwamsjs5d5n9i57c6kbd2c-go-1.23.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/sf1y7x29wvp9lppx5ya9h5b42fcmxb32-go-1.23.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/sf1y7x29wvp9lppx5ya9h5b42fcmxb32-go-1.23.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/jfv85qbj4vb1dafcg6kncg4vrbq2bbxv-go-1.23.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/jfv85qbj4vb1dafcg6kncg4vrbq2bbxv-go-1.23.4"
+        }
+      }
+    },
+    "gocover-cobertura@latest": {
+      "last_modified": "2024-12-23T21:10:33Z",
+      "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#gocover-cobertura",
+      "source": "devbox-search",
+      "version": "1.2.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/wk0pgvz193r3lcyjj9k46xq076dkq91q-gocover-cobertura-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/wk0pgvz193r3lcyjj9k46xq076dkq91q-gocover-cobertura-1.2.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zjsnk0gkniii47nprjfm94g29g2mca7k-gocover-cobertura-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zjsnk0gkniii47nprjfm94g29g2mca7k-gocover-cobertura-1.2.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/llsi9c1wdxxnhygsk1z7550nykb0mr9x-gocover-cobertura-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/llsi9c1wdxxnhygsk1z7550nykb0mr9x-gocover-cobertura-1.2.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6bfqrij8w3nvn6xz4n75v3rld75w0zw5-gocover-cobertura-1.2.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6bfqrij8w3nvn6xz4n75v3rld75w0zw5-gocover-cobertura-1.2.0"
+        }
+      }
+    },
+    "gotestsum@latest": {
+      "last_modified": "2024-12-23T21:10:33Z",
+      "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#gotestsum",
+      "source": "devbox-search",
+      "version": "1.12.0-unstable-2024-09-17",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/bpy24zqs9jff0890chlw2q7cpayp83qi-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/bpy24zqs9jff0890chlw2q7cpayp83qi-gotestsum-1.12.0-unstable-2024-09-17"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/p65z1bb2fjb9l8qvrz7vxnpbz6h7bc9y-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/p65z1bb2fjb9l8qvrz7vxnpbz6h7bc9y-gotestsum-1.12.0-unstable-2024-09-17"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cpvim37q3sxbvfi8fiskd3fi4zw2iwb8-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/cpvim37q3sxbvfi8fiskd3fi4zw2iwb8-gotestsum-1.12.0-unstable-2024-09-17"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/lw5qynmh9qxvbdq1xaa3lms77fdxzjzd-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/lw5qynmh9qxvbdq1xaa3lms77fdxzjzd-gotestsum-1.12.0-unstable-2024-09-17"
+        }
+      }
+    }
+  }
+}

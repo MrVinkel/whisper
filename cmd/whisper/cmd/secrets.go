@@ -1,13 +1,13 @@
-package whisper
+package cmd
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
 
+	"github.com/mrvinkel/whisper/cmd/whisper/config"
+	"github.com/mrvinkel/whisper/cmd/whisper/provider"
 	"github.com/spf13/cobra"
-	"gitlab.com/mr_vinkel/whisper/cmd/whisper/config"
-	"gitlab.com/mr_vinkel/whisper/cmd/whisper/provider"
 )
 
 func SecretsCmd() *cobra.Command {

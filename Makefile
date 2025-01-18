@@ -1,11 +1,17 @@
 .DEFAULT_GOAL := build
+SHELL := /bin/bash
 
-ifdef CI_COMMIT_TAG
-VERSION := $(CI_COMMIT_TAG)
+ifdef RELEASE_TAG
+VERSION := $(RELEASE_TAG)
 else
 VERSION := dev
 endif
-VERSION_PACKAGE := gitlab.com/mr_vinkel/whisper/cmd/whisper
+
+SOURCE_DIR := ./cmd/whisper
+OUTPUT_BIN := ./bin/whisper
+VERSION_VAR := github.com/mrvinkel/whisper/cmd/whisper/cmd.Version
+ARCH:=amd64 386
+OS:=linux windows
 
 .PHONY: setup
 setup: ## Install tools and download dependencies
@@ -15,8 +21,21 @@ setup: ## Install tools and download dependencies
 
 .PHONY: build
 build: ## Build gateway and forwarder
-	@$(eval VERSIONFLAGS=-X '$(VERSION_PACKAGE).Version=$(VERSION)')
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s $(VERSIONFLAGS)" -o ./bin/whisper ./cmd
+	@$(eval VERSIONFLAGS=-X '$(VERSION_VAR)=$(VERSION)')
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s $(VERSIONFLAGS)" -o $(OUTPUT_BIN) $(SOURCE_DIR)
+
+.PHONY: all
+all:  ## Build for all OS/ARCHS
+
+define build-os-arch
+.PHONY: build-$(1)-$(2)
+build-$(1)-$(2):
+	@echo Building whisper-$(1)-$(2) $(VERSION)
+	@$(eval VERSIONFLAGS=-X '$(VERSION_VAR)=$(VERSION)')
+	@CGO_ENABLED=0 GOOS=$(1) GOARCH=$(2) go build -o $(OUTPUT_BIN)-$(1)-$(2) -ldflags="-w -s $(VERSIONFLAGS)" $(SOURCE_DIR)
+all: build-$(1)-$(2)
+endef
+$(foreach o,$(OS), $(foreach a,$(ARCH), $(eval $(call build-os-arch,$(o),$(a)))))
 
 .PHONY: test
 test: ## Run tests
@@ -31,9 +50,22 @@ run: build ## Run whisper
 lint: build ## Lint code
 	@golangci-lint run ./...
 
+.PHONY: tidy
+tidy: ## go mod tidy
+	@go mod tidy
+
 .PHONY: clean
 clean: ## Clean all build files
 	@rm -rf bin
+	@rm -rf result
+
+.PHONY: vendor-hash
+vendor-hash: ## Update vendor hash for nix
+	@set -e ;\
+	vendor=$$(realpath $$(mktemp -d)); \
+	trap "rm -rf $$vendor" EXIT; \
+	go mod vendor -o $$vendor; \
+	nix hash path $$vendor > vendor-hash
 
 .PHONY: dev
 dev: ## Setup dev vault with default secrets, policies and users
@@ -63,12 +95,6 @@ dev-oidc: dev ## Setup dev vault with oidc authentication
 	@docker exec dev-vault vault auth enable oidc
 	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(OIDC_DOMAIN)" oidc_client_id="$(OIDC_CLIENT_ID)" oidc_client_secret="$(OIDC_CLIENT_SECRET)" default_role="reader"
 	@docker exec dev-vault vault write auth/oidc/role/reader bound_audiences="$(OIDC_CLIENT_ID)" allowed_redirect_uris="http://localhost:8200/ui/vault/auth/oidc/oidc/callback" allowed_redirect_uris="http://localhost:8250/oidc/callback" user_claim="sub" token_policies="reader"
-
-.PHONY: dev-oidc-azure
-dev-oidc-azure: dev ## Setup dev vault with azure oidc authentication
-	@docker exec dev-vault vault auth enable oidc
-	@docker exec dev-vault vault write auth/oidc/config oidc_discovery_url="$(AZURE_OIDC_DOMAIN)" oidc_client_id="$(AZURE_OIDC_CLIENT_ID)" oidc_client_secret="$(AZURE_OIDC_CLIENT_SECRET)" default_role="reader"
-	@docker exec dev-vault vault write auth/oidc/role/reader bound_audiences="$(AZURE_OIDC_CLIENT_ID)" allowed_redirect_uris="http://localhost:8200/ui/vault/auth/oidc/oidc/callback" allowed_redirect_uris="http://localhost:8250/oidc/callback" user_claim="sub" token_policies="reader"
 
 .PHONY: dev-clean
 dev-clean: ## Stop and remove dev vault
