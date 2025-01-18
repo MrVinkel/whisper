@@ -10,7 +10,7 @@ NOTE: Do not use whisper for using and/or distributing production secrets.
 
 ## Usage
 
-See the `test` folder for examples
+See the [`test`](./test) folder for examples
 
 ### Configuration
 

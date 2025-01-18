@@ -3,6 +3,7 @@
   "packages": [
     "go@1.23.4",
     "gotestsum@latest",
-    "gocover-cobertura@latest"
+    "gocover-cobertura@latest",
+    "github:mrvinkel/bump"
   ]
 }

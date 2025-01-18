@@ -1,0 +1,11 @@
+{
+    "$schema": "https://raw.githubusercontent.com/MrVinkel/bump/refs/tags/v0.3.0/bump.schema.json",
+    "message": "release ${VERSION}",
+    "prefix": "v",
+    "commit": true,
+    "fetch": true,
+    "preHook": [
+      "sed -i \"s/lastTag = \\\".*\\\";/lastTag = \\\"$VERSION\\\";/g\" flake.nix",
+      "make vendor-hash"
+    ]
+  }
