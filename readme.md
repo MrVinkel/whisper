@@ -31,7 +31,8 @@ provider:
   # OIDC authentication https://developer.hashicorp.com/vault/docs/auth/jwt
   authMethod: oidc
   authMount: oidc
-  # OIDC creates a callback to localhost:8250 by default
+  # OIDC creates a callback to localhost:8250 by default. 
+  # http://localhost:8250/oidc/callback should be configured as an allowed redirect uri in vault oidc and for the idp provider
   callbackPort: 8250
 
   # KV V2 mount to read secrets from
