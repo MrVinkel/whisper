@@ -39,6 +39,7 @@ $(foreach o,$(OS), $(foreach a,$(ARCH), $(eval $(call build-os-arch,$(o),$(a))))
 
 .PHONY: test
 test: ## Run tests
+	@mkdir -p ./bin
 	@gotestsum --format pkgname  -- -coverprofile=./bin/cobertura-coverage.txt -covermode count ./...
 	@gocover-cobertura < ./bin/cobertura-coverage.txt > ./bin/cobertura-coverage.xml
 
