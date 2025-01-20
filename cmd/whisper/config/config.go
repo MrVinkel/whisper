@@ -8,8 +8,15 @@ import (
 )
 
 const (
-	ENV_VAR_DIR_CONFIG = "WHISPER_DIR_CONFIG"
+	ENV_VAR_CONFIG = "WHISPER_CONFIG"
 )
+
+var defaultConfigs = []string{
+	".whisper.yml",
+	".whisper.yaml",
+	"whisper.yml",
+	"whisper.yaml",
+}
 
 type KeyConfig struct {
 	Name   string  `yaml:"name"`
@@ -28,14 +35,25 @@ type DirConfig struct {
 }
 
 func ReadDirConfig() (*DirConfig, error) {
-	configPath := os.Getenv(ENV_VAR_DIR_CONFIG)
-	if configPath == "" {
-		configPath = ".whisper.yml"
+	configPath := os.Getenv(ENV_VAR_CONFIG)
+	configs := defaultConfigs
+	if configPath != "" {
+		configs = append([]string{configPath}, configs...)
 	}
 
-	content, err := os.ReadFile(configPath)
-	if err != nil {
-		return nil, err
+	var err error
+	var content []byte
+	found := false
+	for _, path := range configs {
+		content, err = os.ReadFile(path)
+		if err == nil {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return nil, fmt.Errorf("no config file found")
 	}
 
 	content = []byte(os.ExpandEnv(string(content)))
@@ -66,13 +84,4 @@ func (s *SecretConfig) Get(key string) *KeyConfig {
 		}
 	}
 	return nil
-}
-
-func (s *SecretConfig) Contains(key string) bool {
-	for _, k := range s.Keys {
-		if k.Name == key {
-			return true
-		}
-	}
-	return false
 }
