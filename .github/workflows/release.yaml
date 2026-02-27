@@ -29,7 +29,7 @@ jobs:
         RELEASE_TAG: ${{ github.ref_name }}
       run: make all
     - name: artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: release
         path: bin
@@ -42,7 +42,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: release
         path: bin
