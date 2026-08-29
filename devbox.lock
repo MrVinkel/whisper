@@ -97,51 +97,51 @@
         }
       }
     },
-    "gotestsum@latest": {
-      "last_modified": "2024-12-23T21:10:33Z",
-      "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#gotestsum",
+    "gotestsum@1.13.0": {
+      "last_modified": "2026-08-12T11:28:58Z",
+      "resolved": "github:NixOS/nixpkgs/044bfe75bfe4c7bbe043dc17b5e42ea823b84a09#gotestsum",
       "source": "devbox-search",
-      "version": "1.12.0-unstable-2024-09-17",
+      "version": "1.13.0",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/bpy24zqs9jff0890chlw2q7cpayp83qi-gotestsum-1.12.0-unstable-2024-09-17",
+              "path": "/nix/store/x50b92p9fxx1sb49kzwwn9np4j1f4xlh-gotestsum-1.13.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/bpy24zqs9jff0890chlw2q7cpayp83qi-gotestsum-1.12.0-unstable-2024-09-17"
+          "store_path": "/nix/store/x50b92p9fxx1sb49kzwwn9np4j1f4xlh-gotestsum-1.13.0"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/p65z1bb2fjb9l8qvrz7vxnpbz6h7bc9y-gotestsum-1.12.0-unstable-2024-09-17",
+              "path": "/nix/store/a1zsrgs77yk1yjdx49kmnv2ddk9rrdin-gotestsum-1.13.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/p65z1bb2fjb9l8qvrz7vxnpbz6h7bc9y-gotestsum-1.12.0-unstable-2024-09-17"
+          "store_path": "/nix/store/a1zsrgs77yk1yjdx49kmnv2ddk9rrdin-gotestsum-1.13.0"
         },
         "x86_64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/cpvim37q3sxbvfi8fiskd3fi4zw2iwb8-gotestsum-1.12.0-unstable-2024-09-17",
+              "path": "/nix/store/m6zs9nibxrj5z49ywwihiqpb04k3xdzs-gotestsum-1.13.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/cpvim37q3sxbvfi8fiskd3fi4zw2iwb8-gotestsum-1.12.0-unstable-2024-09-17"
+          "store_path": "/nix/store/m6zs9nibxrj5z49ywwihiqpb04k3xdzs-gotestsum-1.13.0"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/lw5qynmh9qxvbdq1xaa3lms77fdxzjzd-gotestsum-1.12.0-unstable-2024-09-17",
+              "path": "/nix/store/hccvl58wczn849qm9l9wzz9yyywzsx32-gotestsum-1.13.0",
               "default": true
             }
           ],
-          "store_path": "/nix/store/lw5qynmh9qxvbdq1xaa3lms77fdxzjzd-gotestsum-1.12.0-unstable-2024-09-17"
+          "store_path": "/nix/store/hccvl58wczn849qm9l9wzz9yyywzsx32-gotestsum-1.13.0"
         }
       }
     }
