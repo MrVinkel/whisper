@@ -97,51 +97,19 @@
         }
       }
     },
-    "gotestsum@latest": {
-      "last_modified": "2024-12-23T21:10:33Z",
-      "resolved": "github:NixOS/nixpkgs/de1864217bfa9b5845f465e771e0ecb48b30e02d#gotestsum",
+    "gotestsum@0.6.0": {
+      "last_modified": "2021-01-18T12:47:57Z",
+      "resolved": "github:NixOS/nixpkgs/4eccd6f731627ba5ad9915bcf600c9329a34ca78#gotestsum",
       "source": "devbox-search",
-      "version": "1.12.0-unstable-2024-09-17",
+      "version": "0.6.0",
       "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/bpy24zqs9jff0890chlw2q7cpayp83qi-gotestsum-1.12.0-unstable-2024-09-17",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/bpy24zqs9jff0890chlw2q7cpayp83qi-gotestsum-1.12.0-unstable-2024-09-17"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/p65z1bb2fjb9l8qvrz7vxnpbz6h7bc9y-gotestsum-1.12.0-unstable-2024-09-17",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/p65z1bb2fjb9l8qvrz7vxnpbz6h7bc9y-gotestsum-1.12.0-unstable-2024-09-17"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/cpvim37q3sxbvfi8fiskd3fi4zw2iwb8-gotestsum-1.12.0-unstable-2024-09-17",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/cpvim37q3sxbvfi8fiskd3fi4zw2iwb8-gotestsum-1.12.0-unstable-2024-09-17"
-        },
         "x86_64-linux": {
           "outputs": [
             {
-              "name": "out",
-              "path": "/nix/store/lw5qynmh9qxvbdq1xaa3lms77fdxzjzd-gotestsum-1.12.0-unstable-2024-09-17",
+              "path": "/tmp/containerbase/cache/nix/store/r9431rf3n531ljsknr5rdchyiwq83883-gotestsum-0.6.0",
               "default": true
             }
-          ],
-          "store_path": "/nix/store/lw5qynmh9qxvbdq1xaa3lms77fdxzjzd-gotestsum-1.12.0-unstable-2024-09-17"
+          ]
         }
       }
     }
